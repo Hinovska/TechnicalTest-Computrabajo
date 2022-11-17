@@ -163,7 +163,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"CompanyId\": 1,\r\n    \"Email\": \"test1@test.Yest.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\": \"test1\",\r\n    \"Password\": \"test\",\r\n    \"PortalId\": 1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\": 1,\r\n    \"Telephone\": \"000.000.000\",\r\n    \"Username\": \"test1\"\r\n}",
+							"raw": "{\r\n    \"CompanyId\": 1,\r\n    \"Email\": \"test111@test.Yest.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\": \"test11\",\r\n    \"Password\": \"test\",\r\n    \"PortalId\": 1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\": 1,\r\n    \"Telephone\": \"000.000.000\",\r\n    \"Username\": \"test1112\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -207,7 +207,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"Login\": \"test12\",\r\n    \"Password\": \"test\"\r\n}",
+							"raw": "{\r\n    \"Login\": \"test11\",\r\n    \"Password\": \"test11\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
