@@ -1,0 +1,449 @@
+{
+	"info": {
+		"_postman_id": "a95c09fd-b5df-4d56-abae-75dd6cb57181",
+		"name": "Redarbor Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "9687771"
+	},
+	"item": [
+		{
+			"name": "Employee",
+			"item": [
+				{
+					"name": "List All Employees",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List Employees with filters",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Username\": \"test12\",\r\n    \"Email\": \"\",\r\n    \"StatusId\": 2\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor/filter",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor",
+								"filter"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Employee By Id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"CompanyId\": 1,\r\n    \"CreatedOn\": \"2000-01-01 00:00:00\",\r\n    \"DeletedOn\": \"2000-01-01 00:00:00\",\r\n    \"Email\": \"test1@test.test.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\": \"test1\",\r\n    \"Lastlogin\": \"2000-01-01 00:00:00\",\r\n    \"Password\": \"test\",\r\n    \"PortalId\": 1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\": 1,\r\n    \"Telephone\": \"000.000.000\",\r\n    \"UpdatedOn\": \"2000-01-01 00:00:00\",\r\n    \"Username\": \"test1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor/{{employee_id}}",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor",
+								"{{employee_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Employee",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"CompanyId\": 1,\r\n    \"Email\": \"test1@test.Yest.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\": \"test1\",\r\n    \"Password\": \"test\",\r\n    \"PortalId\": 1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\": 1,\r\n    \"Telephone\": \"000.000.000\",\r\n    \"Username\": \"test1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Employee Login",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Login\": \"test12\",\r\n    \"Password\": \"test\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor/auth",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor",
+								"auth"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Employee By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json; charset=UTF-8",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"CompanyId\":1,\r\n    \"Email\":\"test1@test.test.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\":\"test1\",\r\n    \"Password\":\"test\",\r\n    \"PortalId\":1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\":2,\r\n    \"Telephone\":\"000.000.000\",\r\n    \"Username\": \"test_1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor/{{employee_id}}",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor",
+								"{{employee_id}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Employee By Id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"CompanyId\": 1,\r\n    \"CreatedOn\": \"2000-01-01 00:00:00\",\r\n    \"DeletedOn\": \"2000-01-01 00:00:00\",\r\n    \"Email\": \"test1@test.test.tmp\",\r\n    \"Fax\": \"000.000.000\",\r\n    \"Name\": \"test1\",\r\n    \"Lastlogin\": \"2000-01-01 00:00:00\",\r\n    \"Password\": \"test\",\r\n    \"PortalId\": 1,\r\n    \"RoleId\": 1,\r\n    \"StatusId\": 1,\r\n    \"Telephone\": \"000.000.000\",\r\n    \"UpdatedOn\": \"2000-01-01 00:00:00\",\r\n    \"Username\": \"test1\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_host}}/api/v1/redarbor/{{employee_id}}",
+							"host": [
+								"{{api_host}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"redarbor",
+								"{{employee_id}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "HealthCheck",
+			"request": {
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{api_host}}/api/v1/healthcheck",
+					"host": [
+						"{{api_host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Authorization JWT",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"var jsonData = JSON.parse(responseBody);\r",
+							"pm.collectionVariables.set(\"api_token\", jsonData.data);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n    \"userName\" : \"ApiService\", \r\n    \"password\" : \"g+%5Hxk9M&F@wwC-\" \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{api_host}}/api/v1/healthcheck/auth",
+					"host": [
+						"{{api_host}}"
+					],
+					"path": [
+						"api",
+						"v1",
+						"healthcheck",
+						"auth"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{token}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "api_host",
+			"value": "http://localhost:8091",
+			"type": "string"
+		},
+		{
+			"key": "api_token",
+			"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1bmlxdWVfbmFtZSI6IkFwaVNlcnZpY2UiLCJuYmYiOjE2Njg2MTQzMzIsImV4cCI6MTY2ODYxNzkzMiwiaWF0IjoxNjY4NjE0MzMyfQ.mmbdm21bZhcQOSpfSn_JV240QPuDlme-M2Z7nVvVg1I",
+			"type": "string"
+		},
+		{
+			"key": "employee_id",
+			"value": "f19b92f0-8a35-435d-93b5-806b69e32391",
+			"type": "string"
+		}
+	]
+}
