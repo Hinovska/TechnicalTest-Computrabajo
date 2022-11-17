@@ -1,7 +1,9 @@
-﻿namespace Redarbor.WebApp.Authentication
+﻿using Microsoft.IdentityModel.Tokens;
+
+namespace Redarbor.WebApp.Authentication
 {
     public interface IJwtAuthenticationManager
     {
-        string Authenticate(string APIUser, string APIPws);
+        SecurityToken Authenticate(string APIUser, string APIPws);
     }
 }

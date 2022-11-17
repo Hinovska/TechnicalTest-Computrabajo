@@ -15,7 +15,7 @@ namespace Redarbor.BusinessRules.Employee
         #region Properties
 
         private EmployeeFactory factory;
-        private IDatabase<sfEntities.Employee.Employee, sfEntities.Find.Employee> employee;
+        private IDatabase<sfEntities.Employee.Employee, sfEntities.Find.Employee> employeeRepository;
 
         #endregion
 
@@ -24,7 +24,7 @@ namespace Redarbor.BusinessRules.Employee
         public Employee(IConfiguration config)
         {
             this.factory = new AgentEmployeeFactory();
-            this.employee = factory.GetInstance(config);
+            this.employeeRepository = factory.GetInstance(config);
         }
 
         #endregion
@@ -32,14 +32,19 @@ namespace Redarbor.BusinessRules.Employee
         #region Cruds
 
         /// <summary>
-        /// Use for system administrator to add a employee without email verificartion
+        /// Use for apply rules and add a employee
         /// </summary>
         /// <param name="objEmployee"></param>
         /// <returns></returns>
         private sfEntities.Employee.Employee Insert(sfEntities.Employee.Employee objEmployee)
         {
+            objEmployee.StatusId = (short)sfEntities.Enumerator.Status.Active;
+            objEmployee.Password = sfSecurity.EncodePassword(objEmployee.Password);
             objEmployee.CreatedOn = DateTime.UtcNow;
-            sfEntities.Employee.Employee result = employee.Insert(objEmployee);
+            objEmployee.UpdatedOn = null;
+            objEmployee.DeletedOn = null;
+            objEmployee.LastLogin = null;
+            sfEntities.Employee.Employee result = employeeRepository.Insert(objEmployee);
             return result;
         }
 
@@ -50,8 +55,8 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private sfEntities.Employee.Employee Get(Guid employeeId)
         {
-            employee.sfFind = new sfEntities.Find.Employee() { EmployeeId = employeeId };
-            sfEntities.Employee.Employee result = employee.Get();
+            employeeRepository.sfFind = new sfEntities.Find.Employee() { EmployeeId = employeeId };
+            sfEntities.Employee.Employee result = employeeRepository.Get();
             return result;
         }
 
@@ -62,8 +67,8 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private sfEntities.Employee.Employee GetByEmail(string email)
         {
-            employee.sfFind = new sfEntities.Find.Employee() { Email = email };
-            sfEntities.Employee.Employee result = employee.Get();
+            employeeRepository.sfFind = new sfEntities.Find.Employee() { Email = email };
+            sfEntities.Employee.Employee result = employeeRepository.Get();
             return result;
         }
 
@@ -74,8 +79,8 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private sfEntities.Employee.Employee GetByUserName(string userName)
         {
-            employee.sfFind = new sfEntities.Find.Employee() { Username = userName };
-            sfEntities.Employee.Employee result = employee.Get();
+            employeeRepository.sfFind = new sfEntities.Find.Employee() { Username = userName };
+            sfEntities.Employee.Employee result = employeeRepository.Get();
             return result;
         }
 
@@ -86,9 +91,25 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private sfEntities.Employee.Employee Update(sfEntities.Employee.Employee objEmployee)
         {
-            sfEntities.Employee.Employee result = employee.Update(objEmployee);
+            objEmployee.UpdatedOn = DateTime.UtcNow;
+            if (objEmployee.StatusId != (short)sfEntities.Enumerator.Status.Deleted) objEmployee.DeletedOn = null;
+            sfEntities.Employee.Employee result = employeeRepository.Update(objEmployee);
             return result;
         }
+
+        /// <summary>
+        /// Use for logical delete a employee
+        /// </summary>
+        /// <param name="Id"></param>
+        /// <returns></returns>
+        private sfEntities.Employee.Employee Delete(sfEntities.Employee.Employee objEmployee)
+        {
+            objEmployee.StatusId = (short)sfEntities.Enumerator.Status.Deleted;
+            objEmployee.DeletedOn = DateTime.UtcNow;
+            sfEntities.Employee.Employee result = employeeRepository.Update(objEmployee);
+            return result;
+        }
+
 
         /// <summary>
         /// Use for delete a employee
@@ -97,7 +118,7 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private bool Delete(Guid employeeId)
         {
-            bool result = employee.Delete(new sfEntities.Employee.Employee() { EmployeeId = employeeId });
+            bool result = employeeRepository.Delete(new sfEntities.Employee.Employee() { EmployeeId = employeeId });
             return result;
         }
 
@@ -108,8 +129,8 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         private List<sfEntities.Employee.Employee> List(sfEntities.Find.Employee sfFind)
         {
-            employee.sfFind = sfFind;
-            List<sfEntities.Employee.Employee> result = employee.List();
+            employeeRepository.sfFind = sfFind;
+            List<sfEntities.Employee.Employee> result = employeeRepository.List();
             return result;
         }
 
@@ -124,8 +145,8 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         public sfEntities.Employee.Employee Load(Guid employeeId)
         {
-            sfEntities.Employee.Employee result = this.Get(employeeId);
-            return result;
+            sfEntities.Employee.Employee employee = this.Get(employeeId);
+            return employee;
         }
 
         /// <summary>
@@ -135,7 +156,10 @@ namespace Redarbor.BusinessRules.Employee
         /// <returns></returns>
         public bool Remove(Guid employeeId)
         {
-            return this.Delete(employeeId);
+                sfEntities.Employee.Employee employee = this.Get(employeeId);
+            if (employee == null) return false;
+            return (this.Delete(employee) != null);
+            //return this.Delete(employeeId);
         }
 
         /// <summary>
@@ -148,8 +172,6 @@ namespace Redarbor.BusinessRules.Employee
             sfEntities.Employee.Employee result = null;
             if (this.IsValidData(objEmployee))
             {
-                objEmployee.StatusId = (short)sfEntities.Enumerator.Status.Active;
-                objEmployee.Password = sfSecurity.EncodePassword(objEmployee.Password);
                 result = this.Insert(objEmployee);
             }
             return result;
@@ -166,8 +188,7 @@ namespace Redarbor.BusinessRules.Employee
             sfEntities.Employee.Employee employeeData = this.ValidateCredentials(login, password);
             if (this.IsValidData(employeeData))
             {
-                employeeData.LastLogin = DateTime.Now;
-                employeeData = this.Update(employeeData);
+                employeeData = this.UpdateLastAccess(employeeData.EmployeeId, DateTime.Now);
             }
             return employeeData;
         }
@@ -187,26 +208,25 @@ namespace Redarbor.BusinessRules.Employee
         }
 
         /// <summary>
-        /// Use for system to upodate date of last access
+        /// Use for update a employee
         /// </summary>
         /// <param name="employeeId"></param>
         /// <param name="currentDate"></param>
         /// <returns></returns>
-        public sfEntities.Employee.Employee UpdateLastAccess(Guid employeeId, sfEntities.Employee.Employee objEmployee)
+        public sfEntities.Employee.Employee Update(Guid employeeId, sfEntities.Employee.Employee objEmployee)
         {
             sfEntities.Employee.Employee result = null;
             sfEntities.Employee.Employee employee = this.Get(employeeId);
             if (this.IsValidData(employee))
             {
-                employee.Telephone = objEmployee.Telephone;
-                employee.Fax = objEmployee.Fax;
-                employee.PortalId = objEmployee.PortalId;
-                employee.Email = objEmployee.Email;
-                employee.Email = objEmployee.Email;
+                employee.Name = objEmployee.Name;
                 employee.CompanyId = objEmployee.CompanyId;
-                employee.LastLogin = objEmployee.LastLogin;
-                employee.UpdatedOn = objEmployee.UpdatedOn;
-                employee.Username = objEmployee.Username;
+                employee.PortalId = objEmployee.PortalId;
+                employee.RoleId = objEmployee.RoleId;
+                employee.StatusId = objEmployee.StatusId;
+                employee.Email = objEmployee.Email;
+                employee.Fax = objEmployee.Fax;
+                employee.Telephone = objEmployee.Telephone;
                 result = this.Update(employee);
             }
             return result;
@@ -231,6 +251,7 @@ namespace Redarbor.BusinessRules.Employee
             return result;
         }
 
+
         /// <summary>
         /// Use for change password of a employee
         /// </summary>
@@ -242,7 +263,7 @@ namespace Redarbor.BusinessRules.Employee
             if (this.IsValidData(result) && !string.IsNullOrEmpty(newPassword))
             {
                 result.Password = sfSecurity.EncodePassword(newPassword);
-                result = employee.Update(result);
+                result = employeeRepository.Update(result);
             }
             return result;
         }

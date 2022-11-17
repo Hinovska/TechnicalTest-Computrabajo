@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Redarbor.DataRepository.DBModel
+namespace Redarbor.DataRepository.DbModels.Postgres
 {
     public partial class Employee
     {

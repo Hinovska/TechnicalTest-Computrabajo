@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
-namespace Redarbor.DataRepository.DBModel
+namespace Redarbor.DataRepository.DbModels.Postgres
 {
     public partial class RedarborContext : DbContext
     {

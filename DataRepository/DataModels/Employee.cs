@@ -21,9 +21,9 @@ namespace Redarbor.DataRepository.DataModels
         public sfEntities.Employee.Employee Insert(sfEntities.Employee.Employee objEmployee)
         {
             sfEntities.Employee.Employee result = null;
-            using (var context = new DBModel.RedarborContext(_config))
+            using (var context = new DbModels.SqlServer.RedarborContext(_config))
             {
-                DBModel.Employee newEmployee = new DBModel.Employee()
+                DbModels.SqlServer.Employee newEmployee = new DbModels.SqlServer.Employee()
                 {
                     Name = objEmployee.Name,
                     CompanyId = objEmployee.CompanyId,
@@ -35,22 +35,15 @@ namespace Redarbor.DataRepository.DataModels
                     Telephone = objEmployee.Telephone,
                     Username = objEmployee.Username,
                     Password = objEmployee.Password,
-                    CreatedOn = objEmployee.CreatedOn
+                    CreatedOn = objEmployee.CreatedOn,
+                    UpdatedOn = objEmployee.UpdatedOn,
+                    DeletedOn = objEmployee.DeletedOn,
+                    LastLogin = objEmployee.LastLogin
                 };
                 context.Employee.Add(newEmployee);
                 context.SaveChanges();
                 context.Entry(newEmployee).GetDatabaseValues();
                 objEmployee.EmployeeId = newEmployee.EmployeeId;
-                objEmployee.CompanyId = newEmployee.CompanyId;
-                objEmployee.PortalId = newEmployee.PortalId;
-                objEmployee.RoleId = newEmployee.RoleId;
-                objEmployee.StatusId = newEmployee.StatusId;
-                objEmployee.Email = newEmployee.Email;
-                objEmployee.Fax = newEmployee.Fax;
-                objEmployee.Telephone = newEmployee.Telephone;
-                objEmployee.Username = newEmployee.Username;
-                objEmployee.Password = newEmployee.Password;
-                objEmployee.CreatedOn = newEmployee.CreatedOn;
                 result = objEmployee;
             }
             return result;
@@ -59,7 +52,7 @@ namespace Redarbor.DataRepository.DataModels
         public sfEntities.Employee.Employee Update(sfEntities.Employee.Employee objEmployee)
         {
             sfEntities.Employee.Employee result = null;
-            using (var context = new DBModel.RedarborContext(_config))
+            using (var context = new DbModels.SqlServer.RedarborContext(_config))
             {
                 var std = context.Employee.Single(a => a.EmployeeId == objEmployee.EmployeeId);
                 std.Name = objEmployee.Name;
@@ -102,9 +95,9 @@ namespace Redarbor.DataRepository.DataModels
         public bool Delete(sfEntities.Employee.Employee objEmployee)
         {
             bool result = false;
-            using (var context = new DBModel.RedarborContext(_config))
+            using (var context = new DbModels.SqlServer.RedarborContext(_config))
             {
-                Expression<Func<DBModel.Employee, bool>> whereClause = a => a.EmployeeId.Equals(objEmployee.EmployeeId);
+                Expression<Func<DbModels.SqlServer.Employee, bool>> whereClause = a => a.EmployeeId.Equals(objEmployee.EmployeeId);
                 var item = context.Employee.FirstOrDefault(whereClause);
                 if (item != null)
                 {
@@ -119,22 +112,22 @@ namespace Redarbor.DataRepository.DataModels
         public sfEntities.Employee.Employee Get()
         {
             sfEntities.Employee.Employee result = null;
-            using (var context = new DBModel.RedarborContext(_config))
+            using (var context = new DbModels.SqlServer.RedarborContext(_config))
             {
-                DBModel.Employee item = null;
+                DbModels.SqlServer.Employee item = null;
                 if (sfFind.EmployeeId != null && sfFind.EmployeeId != Guid.Empty)
                 {
-                    Expression<Func<DBModel.Employee, bool>> whereClause = a => a.EmployeeId.Equals(sfFind.EmployeeId);
+                    Expression<Func<DbModels.SqlServer.Employee, bool>> whereClause = a => a.EmployeeId.Equals(sfFind.EmployeeId);
                     item = context.Employee.FirstOrDefault(whereClause);
                 }
                 else if (!string.IsNullOrEmpty(sfFind.Username))
                 {
-                    Expression<Func<DBModel.Employee, bool>> whereClause = a => a.Username.Equals(sfFind.Username);
+                    Expression<Func<DbModels.SqlServer.Employee, bool>> whereClause = a => a.Username.Equals(sfFind.Username);
                     item = context.Employee.FirstOrDefault(whereClause);
                 }
                 else if (!string.IsNullOrEmpty(sfFind.Email))
                 {
-                    Expression<Func<DBModel.Employee, bool>> whereClause = a => a.Email.Equals(sfFind.Email);
+                    Expression<Func<DbModels.SqlServer.Employee, bool>> whereClause = a => a.Email.Equals(sfFind.Email);
                     item = context.Employee.FirstOrDefault(whereClause);
                 }
                 if (item != null)
@@ -165,18 +158,19 @@ namespace Redarbor.DataRepository.DataModels
         public List<sfEntities.Employee.Employee> List()
         {
             List<sfEntities.Employee.Employee> result = new List<sfEntities.Employee.Employee>();
-            using (var context = new DBModel.RedarborContext(_config))
+            using (var context = new DbModels.SqlServer.RedarborContext(_config))
             {
                 if (sfFind == null) sfFind = new sfEntities.Find.Employee();
 
                 var employees = context.Employee;
-                IQueryable<DBModel.Employee> query = null;
+                IQueryable<DbModels.SqlServer.Employee> query = null;
 
-                if (sfFind.StatusId >= 0) query = employees.Where(emp => emp.StatusId == sfFind.StatusId);
+                if (sfFind.StatusId > 0) query = employees.Where(emp => emp.StatusId == sfFind.StatusId);
                 if (!string.IsNullOrEmpty(sfFind.Username)) query = query.Where(f => f.Username == sfFind.Username);
                 if (!string.IsNullOrEmpty(sfFind.Email)) query = query.Where(f => f.Email == sfFind.Email);
                 if (sfFind.EmployeeId != null && sfFind.EmployeeId != Guid.Empty) query = query.Where(f => f.EmployeeId == sfFind.EmployeeId);
 
+                if (query == null) query = employees.Where(emp => emp.StatusId != (short)sfEntities.Enumerator.Status.Deleted);
                 var std = query.Select(f => f)
                     .OrderBy(p => p.CreatedOn)
                     .Skip(sfFind.PageSize * (sfFind.PageNumber - 1))

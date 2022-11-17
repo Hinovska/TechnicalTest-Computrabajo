@@ -20,7 +20,7 @@ namespace Redarbor.WebApp.Authentication
             this.API_Users = API_Users;
         }
 
-        public string Authenticate(string APIUser, string APIPws)
+        public SecurityToken Authenticate(string APIUser, string APIPws)
         {
             if (!API_Users.Any(u => u.userName == APIUser && u.password == APIPws))
             {
@@ -36,8 +36,8 @@ namespace Redarbor.WebApp.Authentication
                 Expires = DateTime.UtcNow.AddHours(1),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
             };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            return tokenHandler.WriteToken(token);
+            SecurityToken token = tokenHandler.CreateToken(tokenDescriptor);
+            return token;
         }
     }
 }

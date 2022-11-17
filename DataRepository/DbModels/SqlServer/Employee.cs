@@ -1,14 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Globalization;
+﻿using System;
 
-namespace Redarbor.SystemFramework.Entities.Employee
+namespace Redarbor.DataRepository.DbModels.SqlServer
 {
-    public class Employee
+    public partial class Employee
     {
-
-        #region Properties
-
         public Guid EmployeeId { get; set; }
         public string Name { get; set; }
         public int CompanyId { get; set; }
@@ -25,7 +20,8 @@ namespace Redarbor.SystemFramework.Entities.Employee
         public DateTime? DeletedOn { get; set; }
         public DateTime? LastLogin { get; set; }
 
-        #endregion
-
+        public virtual Company Company { get; set; }
+        public virtual Portal Portal { get; set; }
+        public virtual Role Role { get; set; }
     }
 }

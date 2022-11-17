@@ -15,7 +15,7 @@ namespace Redarbor.WebApp.Controllers
     [ApiController]
     public class RedarborController : ControllerBase
     {
-        private brAplication.Employee.Employee brRedarbor;
+        private brAplication.Employee.Employee brEmployee;
         private IConfiguration _config;
         private readonly ILogger<RedarborController> _logger;
 
@@ -28,7 +28,7 @@ namespace Redarbor.WebApp.Controllers
         {
             _config = config;
             _logger = logger;
-            this.brRedarbor = new brAplication.Employee.Employee(_config);
+            this.brEmployee = new brAplication.Employee.Employee(_config);
         }
 
         // GET: api/v1/<RedarborController>
@@ -38,7 +38,7 @@ namespace Redarbor.WebApp.Controllers
             sfEntities.OperationAPI<List<sfEntities.Employee.Employee>> objResponse = new sfEntities.OperationAPI<List<sfEntities.Employee.Employee>>();
             try
             {
-                objResponse.Data = brRedarbor.Search(null);
+                objResponse.Data = brEmployee.Search(null);
                 objResponse.StatusCode = HttpStatusCode.OK.ToString();
                 return Ok(objResponse);
             }
@@ -58,7 +58,7 @@ namespace Redarbor.WebApp.Controllers
             sfEntities.OperationAPI<List<sfEntities.Employee.Employee>> objResponse = new sfEntities.OperationAPI<List<sfEntities.Employee.Employee>>();
             try
             {
-                objResponse.Data = brRedarbor.Search(sfFind);
+                objResponse.Data = brEmployee.Search(sfFind);
                 objResponse.StatusCode = HttpStatusCode.OK.ToString();
                 return Ok(objResponse);
             }
@@ -79,7 +79,7 @@ namespace Redarbor.WebApp.Controllers
                 sfEntities.OperationAPI<sfEntities.Employee.Employee> objResponse = new sfEntities.OperationAPI<sfEntities.Employee.Employee>();
                 try
                 {
-                    objResponse.Data = brRedarbor.Load(id);
+                    objResponse.Data = brEmployee.Load(id);
                     objResponse.StatusCode = HttpStatusCode.OK.ToString();
                     return Ok(objResponse);
                 }
@@ -97,14 +97,14 @@ namespace Redarbor.WebApp.Controllers
         [HttpPost()]
         public IActionResult Register([FromBody] sfEntities.Employee.Employee objNewEmployee)
         {
-            if (brRedarbor.IsValidData(objNewEmployee))
+            if (brEmployee.IsValidData(objNewEmployee))
             {
                 sfEntities.OperationAPI<sfEntities.Employee.Employee> objResponse = new sfEntities.OperationAPI<sfEntities.Employee.Employee>();
                 try
                 {
-                    if (brRedarbor.Exists(objNewEmployee.Username) == null && brRedarbor.Exists(objNewEmployee.Email) == null)
+                    if (brEmployee.Exists(objNewEmployee.Username) == null && brEmployee.Exists(objNewEmployee.Email) == null)
                     {
-                        objResponse.Data = brRedarbor.Registrer(objNewEmployee);
+                        objResponse.Data = brEmployee.Registrer(objNewEmployee);
                         objResponse.Message = "Employee " + objNewEmployee.Name + "added.";
                         objResponse.StatusCode = HttpStatusCode.OK.ToString();
                         return Ok(objResponse);
@@ -130,12 +130,12 @@ namespace Redarbor.WebApp.Controllers
         [HttpPost("auth")]
         public IActionResult Login([FromBody] sfEntities.Authentication.Credentials objCredentials)
         {
-            if (!string.IsNullOrEmpty(objCredentials.UserLogin) && !string.IsNullOrEmpty(objCredentials.Password))
+            if (!string.IsNullOrEmpty(objCredentials.Login) && !string.IsNullOrEmpty(objCredentials.Password))
             {
-                APIEntities.OperationAPI<sfEntities.Authentication.User> objResponse = new APIEntities.OperationAPI<sfEntities.Authentication.User>();
+                sfEntities.OperationAPI<sfEntities.Employee.Employee> objResponse = new sfEntities.OperationAPI<sfEntities.Employee.Employee>();
                 try
                 {
-                    objResponse.Data = brUser.Login(objCredentials.UserLogin, objCredentials.Password);
+                    objResponse.Data = brEmployee.Login(objCredentials.Login, objCredentials.Password);
                     if (objResponse.Data != null)
                     {
                         objResponse.Message = "Welcome " + objResponse.Data.Username + "!!!";
@@ -163,15 +163,15 @@ namespace Redarbor.WebApp.Controllers
         [HttpPut("{id}")]
         public IActionResult Put(Guid id, [FromBody] sfEntities.Employee.Employee objEmployee)
         {
-            if (brRedarbor.IsValidData(objEmployee) && id != null && id != Guid.Empty)
+            if (brEmployee.IsValidData(objEmployee) && id != null && id != Guid.Empty)
             {
                 sfEntities.OperationAPI<sfEntities.Employee.Employee> objResponse = new sfEntities.OperationAPI<sfEntities.Employee.Employee>();
                 try
                 {
-                    objResponse.Data = brRedarbor.ChangePassword(objEmployee, newPwd);
+                    objResponse.Data = brEmployee.Update(id, objEmployee);
                     if (objResponse.Data != null)
                     {
-                        objResponse.Message = "You password has changed " + objEmployee.Username + " !!!";
+                        objResponse.Message = "Employee " + id.ToString() + " is updated";
                         objResponse.StatusCode = HttpStatusCode.OK.ToString();
                         return Ok(objResponse);
                     }
@@ -201,7 +201,7 @@ namespace Redarbor.WebApp.Controllers
                 sfEntities.OperationAPI<sfEntities.Employee.Employee> objResponse = new sfEntities.OperationAPI<sfEntities.Employee.Employee>();
                 try
                 {
-                    if (brRedarbor.Remove(id))
+                    if (brEmployee.Remove(id))
                     {
                         objResponse.Data = null;
                         objResponse.Message = "Employee " + id.ToString() + " is deleted";

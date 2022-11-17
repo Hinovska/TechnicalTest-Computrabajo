@@ -2,7 +2,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.IdentityModel.Tokens;
 using Redarbor.WebApp.Authentication;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net;
 using sfEntities = Redarbor.SystemFramework.Entities;
 
@@ -41,13 +43,19 @@ namespace Redarbor.WebApp.Controllers
         [HttpPost("auth")]
         public IActionResult Authenticate([FromBody] APIAuthUser appCredentials)
         {
+            sfEntities.OperationAPI<string> objResponse = new sfEntities.OperationAPI<string>();
             if (appCredentials == null || appCredentials == new APIAuthUser())
                 return BadRequest();
 
-            var token = _jwtAuthenticationManager.Authenticate(appCredentials.userName, appCredentials.password);
+            SecurityToken token = _jwtAuthenticationManager.Authenticate(appCredentials.userName, appCredentials.password);
             if (token == null)
                 return Unauthorized();
-            return Ok(token);
+
+            var tokenHandler = new JwtSecurityTokenHandler();
+            objResponse.Data = tokenHandler.WriteToken(token);
+            objResponse.Message = "Valid from " + token.ValidFrom.ToString() + " to " + token.ValidTo.ToString();
+            objResponse.StatusCode = HttpStatusCode.OK.ToString();
+            return Ok(objResponse);
         }
     }
 }

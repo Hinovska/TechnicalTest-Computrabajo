@@ -4,10 +4,10 @@
     {
         public enum Status
         {
-            Active = 0, 
-            Inactive = 1,
-            Blocked = 2,
-            Deleted = 3
+            Active = 1, 
+            Inactive = 2,
+            Blocked = 3,
+            Deleted = 4
         }
     }
 }
